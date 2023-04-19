@@ -8,7 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from .schema import *
 from .models import *
 # loading env
-load_dotenv(".env")
+prod = True
+
+if not prod:
+    load_dotenv(".env")
 
 app = FastAPI()
 
