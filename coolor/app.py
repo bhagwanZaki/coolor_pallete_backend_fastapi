@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .schema import *
 from .models import *
 # loading env
-prod = True
+prod = False
 
 if not prod:
     load_dotenv(".env")
@@ -39,7 +39,9 @@ async def getPallete():
 # create pallete
 @app.post("/create/",tags=['coolor'],response_model=PalleteSchema)
 async def createPallete(data: PalleteSchema):
-    db_pallete = Pallete(color1=data.color1,color2=data.color1,color3=data.color2,color4=data.color3,color5=data.color4)
+    db_pallete = Pallete(color1=data.color1,color2=data.color2,color3=data.color3,color4=data.color4,color5=data.color5)
     db.session.add(db_pallete)
     db.session.commit()
     return db_pallete
+
+
