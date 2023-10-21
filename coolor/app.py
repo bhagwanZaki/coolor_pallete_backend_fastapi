@@ -8,10 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from .schema import *
 from .models import *
 # loading env
-prod = False
+prod = True
+DATA_LIMIT = 12
 
 if not prod:
-    load_dotenv(".env")
+    load_dotenv(".env",override=True)
 
 app = FastAPI()
 
@@ -23,7 +24,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+print(os.environ["DATABASE_URL"])
 app.add_middleware(
     DBSessionMiddleware, 
     db_url=os.environ["DATABASE_URL"]
@@ -31,10 +32,10 @@ app.add_middleware(
 
 # get all pallete
 @app.get("/",tags=['coolor'])
-async def getPallete():
-
-    palletes = db.session.query(Pallete).all()
-    return palletes[::-1]
+async def getPallete(page : int):
+    palletes = db.session.query(Pallete).order_by(Pallete.id.desc()).offset((page - 1) * DATA_LIMIT).limit(DATA_LIMIT).all()
+    print(len(palletes))     
+    return {"data": palletes,"isLast": len(palletes) < DATA_LIMIT}
 
 # create pallete
 @app.post("/create/",tags=['coolor'],response_model=PalleteSchema)
