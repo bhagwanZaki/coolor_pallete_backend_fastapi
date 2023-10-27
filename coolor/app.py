@@ -24,7 +24,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-print(os.environ["DATABASE_URL"])
 app.add_middleware(
     DBSessionMiddleware, 
     db_url=os.environ["DATABASE_URL"]
@@ -33,8 +32,7 @@ app.add_middleware(
 # get all pallete
 @app.get("/",tags=['coolor'])
 async def getPallete(page : int):
-    palletes = db.session.query(Pallete).order_by(Pallete.id.desc()).offset((page - 1) * DATA_LIMIT).limit(DATA_LIMIT).all()
-    print(len(palletes))     
+    palletes = db.session.query(Pallete).order_by(Pallete.id.desc()).offset((page - 1) * DATA_LIMIT).limit(DATA_LIMIT).all()    
     return {"data": palletes,"isLast": len(palletes) < DATA_LIMIT}
 
 # create pallete
